@@ -1,0 +1,160 @@
+<html>
+<head>
+    <script src="../libraries/RGraph.common.core.js" ></script>
+    <script src="../libraries/RGraph.common.context.js"></script>
+    <script src="../libraries/RGraph.common.dynamic.js" ></script>
+    <script src="../libraries/RGraph.common.effects.js"></script>
+    <script src="../libraries/RGraph.common.resizing.js"></script>
+    <script src="../libraries/RGraph.common.zoom.js"></script>
+    <script src="../libraries/RGraph.common.tooltips.js"></script>
+    <script src="../libraries/BacklightingExpand.js"></script>
+
+    <script src="../libraries/RGraph.drawing.rect.js"></script>
+    <script src="../libraries/RGraph.line.js" ></script>
+    <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+
+    <title>Backlighting Software</title>
+
+</head>
+<body style="background: black">
+
+<div style="text-align: center">
+    <canvas id="cvs">[No canvas support]</canvas>
+</div>
+    <script>
+        var GoldenSection = (Math.sqrt(5) - 1) / 2 ;
+
+        $(document).ready(function ()
+        {
+            var WINDOW_WIDTH = document.body.clientWidth ;
+            var WINDOW_HEIGHT = document.body.clientHeight;
+
+            var canvas = document.getElementById("cvs");
+            canvas.width = parseInt(WINDOW_WIDTH - 20);
+            canvas.height = parseInt(WINDOW_HEIGHT - 20);
+
+            var data = [
+                [2517.2,2591.0,2562.8,2587.8,2533.0],
+                [2517.2,2540.0,2562.8,2547.9,2533.0]
+            ];
+            var line = new RGraph.Line({
+                id: 'cvs',
+                data: data,
+                options: {
+                    Background: {
+                        color:'black',
+                        grid:{
+                            autofit:{
+                                self:true,
+                                align:true
+                            },
+                            vlines:false
+                        }
+                    },
+                    linewidth: 2,
+                    hmargin: 30,
+                    shadow: true,
+                    labels: {
+                        self:['X','A','B','C','D'],
+                        above:{
+                            self:true,
+                            decimals:1,
+                            boundingcolor:'black',
+                            size:10
+                        },
+                        ingraph:['X(拖动)','A(拖动)','B','C','D']
+                    },
+                    gutter: {
+                        left: 70,
+                        bottom:50,
+                        right:10,
+                        top:50
+                    },
+                    text:{
+                        size:10,
+                        font:'微软雅黑,Arial',
+                        color:'yellow'
+                    },
+                    ylabels:{
+                        count:10
+                    },
+                    crosshairs:{
+                        self:true,
+                        color:'rgba(255,0,0,0.8)'
+                    },
+                    title:{
+                        self:'啊哈哈哈哈哈哈哈哈哈哈哈哈哈',
+                        color:'yellow',
+                        xaxis:{
+                            self:'时间',
+                            color:'yellow',
+                            pos:0.15
+                        },
+                        yaxis:{
+                            self:'价格',
+                            color:'yellow',
+                            pos:0.15
+                        }
+                    },
+                    axis:{
+                        color:'white'
+                    },
+                    adjustable:{
+                        self:true,
+                        number:[0,1]
+                    },
+                    numxticks:4,
+                    numyticks:10,
+                    zoom:{
+                        factor:1.05,
+                        hdir:'center',
+                        vdir:'center'
+                    },
+                    ymin:2500,
+                    ymax:2600,
+                    filled:{
+                        self:true,
+                        range:true
+                    },
+                    colors:['yellow','yellow'],
+                    fillstyle:'rgba(0,0,255,0.4)'
+                }
+            });
+            line.onadjust = HandleAdjust;
+//            line.onadjustend = HandleAdjustend;
+            line.draw();
+
+            function HandleAdjust(obj){
+                var shape = RGraph.Registry.Get('chart.adjusting.shape');
+                if(shape){
+                   obj.original_data = generatedata(obj.original_data);
+                   obj.labels.ingraph = null;
+                   RGraph.redrawCanvas(shape.object.canvas);
+                }
+            }
+
+//            function HandleAdjustend(obj){
+//                $cl('123');
+//                obj.ymin = obj.data_arr.min() - 10;
+//                obj.ymax = obj.data_arr.max() + 10;
+//                RGraph.redrawCanvas(obj.canvas);
+//            }
+
+            function generatedata(objdata){
+                objdata[0][2] = GoldenSection * Math.abs(objdata[0][1] - objdata[0][0]) + objdata[0][0];
+                objdata[0][3] = Math.sqrt(GoldenSection) * Math.abs(objdata[0][2] - objdata[0][1]) + objdata[0][2];
+                objdata[0][4] = (1 - 0.786) * Math.abs(objdata[0][1] - objdata[0][0]) + objdata[0][0];
+
+                objdata[1]    = objdata[0].concat();
+                objdata[1][1] = (objdata[1][0] + objdata[1][2]) / 2;
+                objdata[1][3] = (objdata[1][2] + objdata[1][4]) / 2;
+                return(objdata);
+            }
+
+        })
+    </script>
+
+
+</body>
+</html>
+
